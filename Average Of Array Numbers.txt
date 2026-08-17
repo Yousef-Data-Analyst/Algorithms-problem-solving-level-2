@@ -1,0 +1,74 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+using namespace std;
+
+int readPositives(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+
+        cin >> number;
+    } while (number <= 0);
+
+    return number;
+}
+int radomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+void fillArrayRandomly(int *&arr, int size)
+{
+    arr = new int[size];
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = radomNumber(1, 100);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i] << " ";
+    }
+}
+
+
+
+float averageOf(int arr[], int size)
+{
+    float sum = 0;
+    for (int i = 0; i < size; i++)
+    {
+        sum += arr[i];
+    }
+    return sum / size;
+}
+
+int main()
+{
+    system("cls");
+    srand((unsigned)time(NULL));
+    int *arr;
+    int size = readPositives("Enter the array size: ");
+
+    cout << endl
+         << "***********************************" << endl;
+
+    fillArrayRandomly(arr, size);
+
+    cout << "\nArray Elements: ";
+    printArray(arr, size);
+
+    cout << endl
+         << endl
+         << "Average of all numbers is: " << averageOf(arr, size) << endl;
+
+    delete[] arr;
+}

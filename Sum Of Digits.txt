@@ -1,0 +1,36 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int readNonNegativeNumber(const string &message)
+{
+    int number = 0;
+    do
+    {
+        cout << message;
+        cin >> number;
+    } while (number < 0);
+    return number;
+}
+
+int sumDigits(int number)
+{
+    int sum = 0;
+    while (number > 0)
+    {
+        sum += number % 10;
+        number /= 10;
+    }
+    return sum;
+}
+
+int main()
+{
+    system("cls");
+    int number = readNonNegativeNumber("Enter a number to sum its digits: ");
+    cout << "****************************************" << endl
+         << endl;
+    cout << "Sum: " << sumDigits(number) << endl;
+}

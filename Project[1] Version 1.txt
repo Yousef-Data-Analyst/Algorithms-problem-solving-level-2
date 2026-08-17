@@ -1,0 +1,264 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+#include <windows.h>
+
+using namespace std;
+
+enum Shapes
+{
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3
+};
+
+enum Colors
+{
+    Red,
+    Yellow,
+    Green
+};
+
+enum Result
+{
+    Win,
+    Lose,
+    Even
+};
+
+struct Score
+{
+    int evens = 0;
+    int wins = 0;
+    int losses = 0;
+};
+
+struct Choices
+{
+    Shapes userChoice;
+    Shapes comChoice;
+};
+
+int readRounds(const string &message, bool positive)
+{
+    int number;
+    do
+    {
+        cout << message;
+        cin >> number;
+    } while (positive && number < 0);
+    return number;
+}
+
+char readChar(const string &message)
+{
+    cout << message;
+    char choice;
+    cin >> choice;
+    return choice;
+}
+
+Shapes getChoice()
+{
+    return Shapes(rand() % 3 + 1);
+}
+
+void printShape(Shapes shape)
+{
+    if (shape == Rock)
+        cout << R"(
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+)";
+    else if (shape == Paper)
+        cout << R"(
+    _______
+---'   ____)____
+          ______)
+          _______)
+         _______)
+---.__________)
+)";
+    else
+        cout << R"(
+   _______
+--'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+)";
+}
+
+Shapes getUserChoice()
+{
+    int choice;
+    do
+    {
+        cout << "Your Choice: [1]:Rock, [2]:Paper, [3]:Scissors: ";
+        cin >> choice;
+    } while (!(choice >= 1 && choice <= 3));
+    return (Shapes)choice;
+}
+
+void changeScreenColor(Colors color)
+{
+    if (color == Colors::Red)
+    {
+        Beep(750, 100);
+        system("color 4F");
+    }
+    else if (color == Colors::Green)
+        system("color 2F");
+    else
+        system("color EF");
+}
+
+string choiceToString(Shapes choice)
+{
+    switch (choice)
+    {
+    case Rock:
+        return "Rock";
+    case Paper:
+        return "Paper";
+    case Scissors:
+        return "Scissors";
+    default:
+        return "Nothing";
+    }
+}
+
+Result getResult(Choices choices)
+{
+    if (choices.userChoice == choices.comChoice)
+        return Even;
+    else if (choices.userChoice == Rock && choices.comChoice == Scissors)
+        return Win;
+    else if (choices.userChoice == Paper && choices.comChoice == Rock)
+        return Result::Win;
+    else if (choices.userChoice == Scissors && choices.comChoice == Paper)
+        return Result::Win;
+    else
+        return Result::Lose;
+}
+
+Colors resultToColor(Result result)
+{
+    switch (result)
+    {
+    case Win:
+        return Colors::Green;
+    case Lose:
+        return Colors::Red;
+    default:
+        return Colors::Yellow;
+    }
+}
+
+void modifyScore(Score &score, Choices choices)
+{
+    Result result = getResult(choices);
+    if (result == Result::Win)
+        score.wins += 1;
+    else if (result == Result::Lose)
+        score.losses += 1;
+    else
+        score.evens += 1;
+}
+
+string getfinalWinner(Score scores)
+{
+    if (scores.losses > scores.wins)
+        return "Computer";
+    else if (scores.losses < scores.wins)
+        return "Player";
+    else
+        return "No Winner";
+}
+
+string getRoundWinner(Choices choices)
+{
+    Result result = getResult(choices);
+    if (result == Result::Win)
+        return "Player";
+    else if (result == Result::Lose)
+        return "Computer";
+    else
+        return "No Winner";
+}
+
+void printScore(Score score, int round, Choices choices)
+{
+    cout << "_______________________Round[" << round << "]_______________________" << endl;
+    cout << "Your Choice: " << choiceToString(choices.userChoice) << endl;
+    printShape(choices.userChoice);
+    cout << endl;
+    cout << "Computer Choice: " << choiceToString(choices.comChoice) << endl;
+    printShape(choices.comChoice);
+    cout << endl;
+    cout << "Round Winner: [" << getRoundWinner(choices) << "]" << endl;
+    cout << "______________________________________________________";
+}
+
+void displayFinalResults(int rounds, Score scores)
+{
+    cout << "\t\t\t_________________________________________________________" << endl
+         << endl;
+    cout << "\t\t\t                 +++ G a m e O v e r +++                 " << endl;
+    cout << "\t\t\t_________________________________________________________" << endl;
+    cout << "\t\t\t____________________ [Game Results]______________________" << endl;
+    cout << "\t\t\tGame Rounds       : " << rounds << endl;
+    cout << "\t\t\tPlayer Won Times  : " << scores.wins << endl;
+    cout << "\t\t\tComputer Won Times: " << scores.losses << endl;
+    cout << "\t\t\tDraw Times        : " << scores.evens << endl;
+    cout << "\t\t\tFinal Winner      : " << getfinalWinner(scores) << endl;
+    cout << "\t\t\t_________________________________________________________" << endl
+         << endl;
+}
+
+void playGame()
+{
+    system("cls");
+    system("color 07");
+
+    int rounds = 0;
+    Score score;
+    Choices choices;
+
+    rounds = readRounds("Enter how Many rounds do you wanna play: ", true);
+
+    for (int i = 1; i <= rounds; i++)
+    {
+        cout << endl
+             << "Round[" << i << "] Begins:-" << endl
+             << endl;
+
+        choices.userChoice = getUserChoice();
+        choices.comChoice = getChoice();
+
+        modifyScore(score, choices);
+
+        changeScreenColor(resultToColor(getResult(choices)));
+
+        printScore(score, i, choices);
+        cout << endl;
+        cout << endl;
+    }
+    displayFinalResults(rounds, score);
+}
+
+int main()
+{
+    srand((unsigned)time(NULL));
+
+    do
+    {
+        playGame();
+    } while (tolower(readChar("Do you wanna play Again [y-> yes] [n-> no]: ")) != 'y');
+}

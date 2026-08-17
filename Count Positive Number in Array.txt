@@ -1,0 +1,85 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+int readInteger(const string &message, bool positive = true)
+{
+    int number;
+
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (positive && number < 0);
+
+    return number;
+}
+
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+void fillArray(int arr[], int &size)
+{
+    size = readInteger("Enter the array size: ");
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = randomNumber(-100, 100);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+    cout << "[";
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i];
+        if (i < size - 1)
+
+            cout << ", ";
+    }
+    cout << "]";
+}
+
+bool isPositive(int number)
+{
+    return number > 0;
+}
+
+int countPositives(int arr[], int size)
+{
+    int count = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (isPositive(arr[i]))
+            count++;
+    }
+    return count;
+}
+
+int main()
+{
+    system("cls");
+
+    srand((unsigned)time(NULL));
+
+    int arr[100], size;
+
+    fillArray(arr, size);
+
+    cout << endl
+         << "Array Elements: " << endl
+         << endl;
+    printArray(arr, size);
+
+    cout << endl;
+
+    cout << endl
+         << "Positive numbers Count is: " << countPositives(arr, size) << endl;
+}

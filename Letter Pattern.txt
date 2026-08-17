@@ -1,0 +1,33 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int readNonNegative(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (number < 0);
+    return number;
+}
+
+void printLetterPattern(int num)
+{
+    char letter = 'A';
+    for (int i = 0; i < 26; i++)
+    {
+        cout << char(letter + i) << " ";
+    }
+    cout << endl;
+}
+
+int main()
+{
+    system("cls");
+    printLetterPattern(readNonNegative("Enter a number to print letters pattern :) ? "));
+}

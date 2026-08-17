@@ -1,0 +1,98 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+int readInteger(const string &message, bool positive = true)
+{
+    int number;
+
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (positive && number < 0);
+
+    return number;
+}
+
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+void fillArrayRandomly(int *&arr, int &size)
+{
+    size = readInteger("Enter the Array Size: ");
+    arr = new int[size];
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = randomNumber(1, 100);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i] << " ";
+    }
+}
+
+int getIndex(int number, int arr[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (number == arr[i])
+            return i;
+    }
+    return -1;
+}
+
+bool numberFound(int number, int arr[], int size)
+{
+    return (getIndex(number, arr, size) != -1) ? true : false;
+}
+
+void lookForNumber(int number, int arr[], int size)
+{
+    cout << endl
+         << "Number you are looking for is: " << number << endl;
+
+    if (numberFound(number, arr, size))
+    {
+        cout << "Number is found :)." << endl;
+    }
+    else
+    {
+        cout
+            << "Number is not found :( ." << endl;
+    }
+}
+
+int main()
+{
+    system("cls");
+
+    srand((unsigned)time(NULL));
+
+    int *arr, size;
+
+    fillArrayRandomly(arr, size);
+
+    cout << endl
+         << "Array Elements:-" << endl
+         << endl;
+    printArray(arr, size);
+
+    cout << endl
+         << endl;
+
+    lookForNumber(readInteger("Enter a number to look for? "), arr, size);
+
+    delete[] arr;
+}

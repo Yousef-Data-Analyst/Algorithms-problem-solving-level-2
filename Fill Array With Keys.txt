@@ -1,0 +1,109 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+enum CharType
+{
+    CapitalLetter = 1,
+    SmallLetter = 2,
+    SpecialCharacter = 3,
+    Number = 4
+};
+
+int readInteger(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+
+        cin >> number;
+    } while (number <= 0);
+    return number;
+}
+
+void printArray(string arr[], int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        cout << "Array[" << i + 1 << "] : " << arr[i] << endl;
+    }
+}
+
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+char getRandomCharacter(CharType character)
+{
+    switch (character)
+    {
+    case CharType::CapitalLetter:
+        return char(randomNumber(65, 90));
+    case CharType::SmallLetter:
+        return char(randomNumber(97, 122));
+    case CharType::SpecialCharacter:
+        return char(randomNumber(58, 64));
+    case CharType::Number:
+        return char(randomNumber(48, 57));
+    default:
+        return char(13);
+    }
+}
+
+string generateWord(CharType type, short length)
+{
+    string word = "";
+    for (int j = 0; j < length; j++)
+    {
+        word += getRandomCharacter(type);
+    }
+    return word;
+}
+
+string generateKey()
+{
+    string key = "";
+    for (int i = 0; i < 4; i++)
+    {
+        key += generateWord(CapitalLetter, 4);
+        if (i < 3)
+            key += "-";
+    }
+    return key;
+}
+
+void fillArray(string *&arr, int &size)
+{
+    size = readInteger("Enter the array size: ");
+
+    arr = new string[size];
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = generateKey();
+    }
+}
+
+int main()
+{
+    system("cls");
+
+    srand((unsigned)time(NULL));
+
+    string *arr;
+    int size;
+
+    fillArray(arr, size);
+
+    cout << endl
+         << "Array Elements:-" << endl
+         << endl;
+    printArray(arr, size);
+    cout << endl;
+}

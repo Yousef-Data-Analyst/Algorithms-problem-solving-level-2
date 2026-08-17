@@ -1,0 +1,266 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+#include <windows.h>
+
+using namespace std;
+
+enum Choices
+{
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3
+};
+
+enum Winner
+{
+    Player,
+    Computer,
+    Draw
+};
+
+struct GameInfo
+{
+    int rounds = 0;
+    int wins = 0;
+    int losses = 0;
+    int draws = 0;
+    Winner enWinner;
+    string WinnerName;
+};
+
+struct RoundInfo
+{
+    int roundNumber = 0;
+    Choices userChoice;
+    Choices comChoice;
+    string winnerName;
+    Winner enwinner;
+};
+
+Choices getComputerChoice()
+{
+    return Choices(rand() % 3 + 1);
+}
+
+short readRounds(const string &message, bool positive = true)
+{
+    short rounds;
+    do
+    {
+        cout << message;
+        cin >> rounds;
+    } while (positive && !(rounds >= 1 && rounds <= 10));
+    return rounds;
+}
+
+char readChar(const string &message)
+{
+    cout << message;
+    char choice;
+    cin >> choice;
+    return choice;
+}
+
+Choices getUserChoice()
+{
+    int choice;
+    do
+    {
+        cout << "Your Choice: [1]:Rock, [2]:Paper, [3]Scissors: ";
+        cin >> choice;
+    } while (choice < 1 || choice > 3);
+    return (Choices)choice;
+}
+
+Winner getRoundWinner(Choices userChoice, Choices comChoice)
+{
+    if (userChoice == comChoice)
+        return Winner::Draw;
+
+    switch (userChoice)
+    {
+    case Choices::Rock:
+        return (comChoice == Choices::Scissors) ? Winner::Player : Winner::Computer;
+    case Choices::Paper:
+        return (comChoice == Choices::Rock) ? Winner::Player : Winner::Computer;
+    default:
+        return (comChoice == Choices::Paper) ? Winner::Player : Winner::Computer;
+    }
+}
+
+Winner getGameWinner(const GameInfo &gameInfo)
+{
+    if (gameInfo.wins == gameInfo.losses)
+        return Winner::Draw;
+    else if (gameInfo.wins > gameInfo.losses)
+        return Winner::Player;
+    else
+        return Winner::Computer;
+}
+
+string getWinnerName(Winner winner)
+{
+    string winners[3] = {"Player", "Computer", "Draw"};
+    return winners[winner];
+}
+
+string choiceToString(Choices choice)
+{
+    switch (choice)
+    {
+    case Rock:
+        return "Rock";
+    case Paper:
+        return "Paper";
+    case Scissors:
+        return "Scissors";
+    default:
+        return "Nothing";
+    }
+}
+
+void printShape(Choices shape)
+{
+    if (shape == Rock)
+        cout << R"(
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+)";
+    else if (shape == Paper)
+        cout << R"(
+    _______
+---'   ____)____
+          ______)
+          _______)
+         _______)
+---.__________)
+)";
+    else
+        cout << R"(
+   _______
+--'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+)";
+}
+
+void changeScreenColor(Winner enWinner)
+{
+    if (enWinner == Winner::Computer)
+    {
+        Beep(750, 100);
+        system("color 4F");
+    }
+    else if (enWinner == Winner::Player)
+        system("color 2F");
+    else
+        system("color EF");
+}
+
+string tabs(int count)
+{
+    string tabs = "";
+    for (int i = 1; i <= count; i++)
+    {
+        tabs += "\t";
+    }
+    return tabs;
+}
+
+void printRoundInfo(const RoundInfo &roundInfo)
+{
+    cout << "_______________________Round[" << roundInfo.roundNumber << "]_______________________" << endl;
+    cout << "Your Choice: " << choiceToString(roundInfo.userChoice) << endl;
+    printShape(roundInfo.userChoice);
+    cout << endl;
+    cout << "Computer Choice: " << choiceToString(roundInfo.comChoice) << endl;
+    printShape(roundInfo.comChoice);
+    cout << endl;
+    cout << "Round Winner: [" << roundInfo.winnerName << "]" << endl;
+    cout << "______________________________________________________";
+    changeScreenColor(roundInfo.enwinner);
+}
+
+GameInfo playGame(short rounds)
+{
+    RoundInfo roundInfo;
+    GameInfo gameInfo;
+    for (int i = 1; i <= rounds; i++)
+    {
+        cout << endl
+             << "Round [" << i << "] Begins:-" << endl
+             << endl;
+        roundInfo.roundNumber = i;
+        roundInfo.userChoice = getUserChoice();
+        roundInfo.comChoice = getComputerChoice();
+        roundInfo.enwinner = getRoundWinner(roundInfo.userChoice, roundInfo.comChoice);
+        roundInfo.winnerName = getWinnerName(roundInfo.enwinner);
+
+        if (roundInfo.enwinner == Winner::Player)
+
+            gameInfo.wins += 1;
+
+        else if (roundInfo.enwinner == Winner::Computer)
+
+            gameInfo.losses += 1;
+
+        else
+            gameInfo.draws += 1;
+
+        printRoundInfo(roundInfo);
+        cout << endl;
+    }
+    gameInfo.rounds = rounds;
+    gameInfo.enWinner = getGameWinner(gameInfo);
+    gameInfo.WinnerName = getWinnerName(gameInfo.enWinner);
+
+    return gameInfo;
+}
+
+void displayFinalResults(const GameInfo &gameInfo)
+{
+    cout << tabs(3) << "_________________________________________________________" << endl
+         << endl;
+    cout << tabs(3) << "                 +++ G a m e O v e r +++                 " << endl;
+    cout << tabs(3) << "_________________________________________________________" << endl;
+    cout << tabs(3) << "____________________ [Game Results]______________________" << endl;
+    cout << tabs(3) << "Game Rounds       : " << gameInfo.rounds << endl;
+    cout << tabs(3) << "Player Won Times  : " << gameInfo.wins << endl;
+    cout << tabs(3) << "Computer Won Times: " << gameInfo.losses << endl;
+    cout << tabs(3) << "Draw Times        : " << gameInfo.draws << endl;
+    cout << tabs(3) << "Final Winner      : " << gameInfo.WinnerName << endl;
+    cout << tabs(3) << "_________________________________________________________" << endl
+         << endl;
+    changeScreenColor(gameInfo.enWinner);
+}
+
+void resetColor()
+{
+    system("cls");
+    system("color 07");
+}
+
+void startGame()
+{
+    do
+    {
+        resetColor();
+        short rounds = readRounds("Enter How Many rounds Do you Wanna Play From 1 To 10 ? ");
+        displayFinalResults(playGame(rounds));
+    } while (tolower(readChar("Do you wanna play Again [y-> yes] [n-> no]: ")) == 'y');
+}
+
+int main()
+{
+    srand((unsigned)time(NULL));
+
+    startGame();
+}

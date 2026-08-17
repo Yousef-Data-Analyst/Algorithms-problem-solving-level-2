@@ -1,0 +1,71 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+using namespace std;
+
+int readInteger(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+
+        cin >> number;
+    } while (number < 0);
+
+    return number;
+}
+
+void readArray(int *&arr, int size)
+{
+    arr = new int[size];
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = readInteger("Element[" + to_string(i + 1) + "] : ");
+    }
+}
+
+int getNumberFrequency(int arr[], int size, int checkNumber)
+{
+    int freq = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (arr[i] == checkNumber)
+            freq += 1;
+    }
+    return freq;
+}
+
+void printArray(int arr[], int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i] << " ";
+    }
+}
+
+int main()
+{
+    system("cls");
+    int *arr;
+    int size = readInteger("Enter the array size: ");
+    cout << endl
+         << "*******************************" << endl
+         << endl;
+
+    cout << "Enter array Elements: " << endl;
+
+    readArray(arr, size);
+    int check_number = readInteger("\nEnter the number you want to check: ");
+
+    cout << endl
+         << "Original array: ";
+    printArray(arr, size);
+
+    cout << endl
+         << endl
+         << check_number << " repeated " << getNumberFrequency(arr, size, check_number) << " Times. " << endl;
+}
+

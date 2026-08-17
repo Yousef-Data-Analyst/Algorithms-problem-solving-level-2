@@ -1,0 +1,85 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+int readInteger(const string &message, bool positive = true)
+{
+    int number;
+
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (positive && number < 0);
+
+    return number;
+}
+
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+void fillArray(int arr[], int &size)
+{
+    size = readInteger("Enter the array size: ");
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = randomNumber(1, 100);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+    cout << "[";
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i];
+        if (i == size - 1)
+            continue;
+        cout << ", ";
+    }
+    cout << "]";
+}
+
+bool isOdd(int number)
+{
+    return number % 2 == 1;
+}
+
+int countOdds(int arr[], int size)
+{
+    int count = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (isOdd(arr[i]))
+            count++;
+    }
+    return count;
+}
+
+int main()
+{
+    system("cls");
+
+    srand((unsigned)time(NULL));
+
+    int arr[100], size;
+
+    fillArray(arr, size);
+
+    cout << endl
+         << "Array Elements: " << endl
+         << endl;
+    printArray(arr, size);
+
+    cout << endl;
+
+    cout << endl
+         << "Odd numbers Count is: " << countOdds(arr, size) << endl;
+}

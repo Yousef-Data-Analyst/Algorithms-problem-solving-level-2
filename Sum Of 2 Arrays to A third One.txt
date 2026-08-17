@@ -1,0 +1,121 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+int readPositives(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+
+        cin >> number;
+    } while (number <= 0);
+
+    return number;
+}
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+void fillArrayRandomly(int *&arr, int &size)
+{
+
+    arr = new int[size];
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = randomNumber(1, 100);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i] << " ";
+    }
+}
+
+bool isPrime(int number)
+{
+    if (number == 1)
+        return false;
+    if (number == 2)
+        return true;
+    if (number % 2 == 0)
+        return false;
+    for (int i = 3; i <= sqrt(number); i += 2)
+    {
+        if (number % i == 0)
+            return false;
+    }
+    return true;
+}
+
+int copyPrimes(int arr[], int *&arrayCopy, int size)
+{
+    arrayCopy = new int[size];
+    int counter = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (isPrime(arr[i]))
+            arrayCopy[counter++] = arr[i];
+    }
+    return counter;
+}
+
+void sum2Arrays(int arr1[], int arr2[], int *&arr3, int size)
+{
+    arr3 = new int[size];
+    for (int i = 0; i < size; i++)
+    {
+        arr3[i] = arr1[i] + arr2[i];
+    }
+}
+
+int main()
+{
+    system("cls");
+
+    srand((unsigned)time(NULL));
+
+    int *arr, size;
+
+    size = readPositives("Enter the arrays size: ");
+
+    cout << endl
+         << "*******************************************" << endl
+         << endl;
+
+    fillArrayRandomly(arr, size);
+
+    cout << "\nArray 1 Elements: ";
+    printArray(arr, size);
+
+    cout << endl;
+
+    int *arr2;
+
+    fillArrayRandomly(arr2, size);
+
+    cout << "\nArray 2 Elements: ";
+    printArray(arr2, size);
+
+    cout << endl;
+
+    int *arrSum;
+
+    sum2Arrays(arr, arr2, arrSum, size);
+
+    cout << "\nSum of The two Arrays: ";
+    printArray(arrSum, size);
+
+    delete[] arr;
+    delete[] arr2;
+    delete[] arrSum;
+}

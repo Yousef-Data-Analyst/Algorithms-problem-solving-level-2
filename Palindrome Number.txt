@@ -1,0 +1,61 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+enum enPalindrome
+{
+    Palindrome,
+    NotPalindrome
+};
+
+long long readNonNegative(const string &message)
+{
+    long long number;
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (number < 0);
+    return number;
+}
+
+long long reverseDigits(long long number)
+{
+    long long reversedNumber = 0;
+    do
+    {
+        reversedNumber *= 10;
+        reversedNumber += number % 10;
+        number /= 10;
+
+    } while (number > 0);
+    return reversedNumber;
+}
+
+enPalindrome checkPalindrome(long long number)
+{
+    if (number == reverseDigits(number))
+        return enPalindrome::Palindrome;
+    else
+        return enPalindrome::NotPalindrome;
+}
+
+void showPalindrome(long long number)
+{
+    cout << endl
+         << "***********************************" << endl
+         << endl;
+    if (checkPalindrome(number) == enPalindrome::Palindrome)
+        cout << number << " is Palindrome. " << endl;
+    else
+        cout << number << " is not Palidrome. " << endl;
+}
+
+int main()
+{
+    system("cls");
+    showPalindrome(readNonNegative("Enter a number to check if Palindrome: "));
+}

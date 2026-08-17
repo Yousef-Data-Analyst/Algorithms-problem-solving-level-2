@@ -1,0 +1,49 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int readNonNegative(const string &message)
+{
+    int number;
+    cout << message;
+    cin >> number;
+    return number;
+}
+
+int calculateFreq(int digit, int number)
+{
+    int freq = 0;
+    int num = number;
+    while (num > 0)
+    {
+        if (num % 10 == digit)
+        {
+
+            freq += 1;
+        }
+        num /= 10;
+    }
+    return freq;
+}
+
+void printDigitsFreqForNumber(int number)
+{
+    cout << endl
+         << "*******************************" << endl
+         << endl;
+
+    for (int i = 0; i < 10; i++)
+    {
+        int freq = calculateFreq(i, number);
+        if (freq != 0)
+            cout << " Digit " << i << " repeated " << freq << " Times" << endl;
+    }
+}
+
+int main()
+{
+    system("cls");
+    printDigitsFreqForNumber(readNonNegative("Enter a number to check each digit frequency: "));
+}

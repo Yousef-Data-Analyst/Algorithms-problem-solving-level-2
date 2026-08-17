@@ -1,0 +1,53 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int readNonNegativeNumber(const string &message)
+{
+    int number = 0;
+    do
+    {
+        cout << message;
+        cin >> number;
+    } while (number < 0);
+    return number;
+}
+
+bool isDivisor(int dividend, int divisor)
+{
+    return (dividend % divisor == 0) ? true : false;
+}
+
+int sumDivisors(int number)
+{
+    int sum = 0;
+    for (int i = 1; i <= number / 2; i++)
+        if (isDivisor(number, i))
+            sum += i;
+    return sum;
+}
+
+bool isPerfect(int number)
+{
+    return (sumDivisors(number) == number) ? true : false;
+}
+
+void printPerfectsUntilNumber(int num)
+{
+    for (int i = 1; i <= num; i++)
+    {
+        if (isPerfect(i))
+            cout << i << " ";
+    }
+}
+
+int main()
+{
+
+    system("cls");
+    int num = readNonNegativeNumber("Enter a number to get Perfects until: ");
+
+    printPerfectsUntilNumber(num);
+}

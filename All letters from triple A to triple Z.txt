@@ -1,0 +1,38 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int readNonNegative(const string &message)
+{
+    int number;
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (number < 0);
+    return number;
+}
+
+void printLettersFromAAA_To_ZZZ()
+{
+    char letter = 'A';
+    for (int i = 0; i < 26; i++)
+    {
+        for (int j = 0; j < 26; j++)
+        {
+            for (int k = 0; k < 26; k++)
+            {
+                cout << char(letter + i) << " " << char(letter + j) << " " << char(letter + k) << " " << endl;
+            }
+        }
+    }
+}
+
+int main()
+{
+    system("cls");
+    printLettersFromAAA_To_ZZZ();
+}

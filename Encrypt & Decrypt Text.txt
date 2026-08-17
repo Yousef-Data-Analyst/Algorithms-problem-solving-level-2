@@ -1,0 +1,80 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+string readText(const string &message)
+{
+    string password;
+    cout << message;
+    getline(cin, password);
+    return password;
+}
+
+int readEncryptionKey(const string &message)
+{
+    cout << message;
+    int key;
+    cin >> key;
+    return key % 26;
+}
+
+string encrypt(string password, int key)
+{
+    string encryptedPassword = "";
+
+    for (int i = 0; i < password.length(); i++)
+    {
+        if (password[i] == ' ')
+        {
+            encryptedPassword += ' ';
+            continue;
+        }
+        if (password[i] == tolower(password[i]))
+            // encryptedPassword += (((password[i] + key) % 'a') % 26) + 'a';
+            encryptedPassword += ((password[i] - 'a' + key) % 26) + 'a';
+        else
+            // encryptedPassword += (((password[i] + key) % 'A') % 26) + 'A';
+            encryptedPassword += ((password[i] - 'A' + key) % 26) + 'A';
+    }
+    return encryptedPassword;
+}
+
+string decrypt(string password, int key)
+{
+    string decryptedPassword = "";
+
+    for (int i = 0; i < password.length(); i++)
+    {
+
+        if (password[i] == ' ')
+        {
+            decryptedPassword += ' ';
+            continue;
+        }
+        if (password[i] == tolower(password[i]))
+        {
+            // decryptedPassword += 'z' - 'z' % (password[i] - key) % 26;
+            decryptedPassword += (password[i] - 'a' - key + 26) % 26 + 'a';
+        }
+        else
+        {
+
+            // decryptedPassword += 'Z' - 'Z' % (password[i] - key) % 26;
+            decryptedPassword += (password[i] - 'A' - key + 26) % 26 + 'A';
+        }
+    }
+    return decryptedPassword;
+}
+
+int main()
+{
+    system("cls");
+    string password = readText("Enter the password to encrpyt: ");
+
+    int key = readEncryptionKey("Enter the encryption key: ");
+
+    cout << "Encrypted Password: " << encrypt(password, key) << endl;
+    cout << "Decrypted Password: " << decrypt(encrypt(password, key), key) << endl;
+}

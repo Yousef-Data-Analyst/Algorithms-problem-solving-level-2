@@ -1,0 +1,47 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+struct Number
+{
+    long long number;
+    int digit;
+};
+
+Number readNumber()
+{
+    Number number;
+    cout << "Enter a number: ";
+    cin >> number.number;
+    cout << "Enter a digit to check its frequency: ";
+    cin >> number.digit;
+    return number;
+}
+
+int calculateFreq(Number number)
+{
+    int freq = 0;
+    long long num = number.number;
+    while (num > 0)
+    {
+        if (num % 10 == number.digit)
+        {
+
+            freq += 1;
+        }
+        num /= 10;
+    }
+    return freq;
+}
+
+int main()
+{
+    system("cls");
+    Number number = readNumber();
+    cout << endl
+         << "********************************************" << endl
+         << endl;
+    cout << "Digit " << number.digit << " repeated " << calculateFreq(number) << " Times" << endl;
+}

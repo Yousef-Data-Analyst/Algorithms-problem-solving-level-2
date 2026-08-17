@@ -1,0 +1,34 @@
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+float readNumber(const string &message, bool positive = true)
+{
+    float number;
+
+    do
+    {
+        cout << message;
+        cin >> number;
+
+    } while (positive && number < 0);
+
+    return number;
+}
+
+float myFloor(float number)
+{
+    return (number > 0 || number == int(number)) ? int(number)
+                                                 : int(number) - 1;
+}
+
+int main()
+{
+    system("cls");
+    float number = readNumber("Enter a Number: ", false);
+    cout << "MyFloor result: " << myFloor(number) << endl;
+    cout << "C++ floor result: " << floor(number) << endl;
+}
