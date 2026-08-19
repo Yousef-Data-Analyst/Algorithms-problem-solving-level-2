@@ -1,0 +1,312 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+enum class Operators
+{
+    Addition = 1,
+    Subtraction = 2,
+    Multiplication = 3,
+    Divsion = 4,
+    Mix = 5
+};
+
+enum class EquationLevel
+{
+    Hard = 1,
+    Mid = 2,
+    Easy = 3,
+    Mix = 4
+};
+
+enum Result
+{
+    Pass,
+    Fail
+};
+
+struct stEquation
+{
+    EquationLevel level;
+    int operand1;
+    int operand2;
+    Operators op;
+    int result;
+};
+
+struct RoundInfo
+{
+    stEquation equation;
+    Result enresult;
+    int userAnswer;
+};
+
+struct GameInfo
+{
+    int Rounds = 0;
+    int wins = 0;
+    int losses = 0;
+    Result enresult;
+    string gameLevel;
+    string OperationType;
+};
+
+int randomNumber(int from, int to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+int readRounds()
+{
+    int rounds;
+    do
+    {
+        cout << "How many rounds do you want to play (1 to 10)? ";
+        cin >> rounds;
+    } while (rounds > 10 || rounds < 1);
+    return rounds;
+}
+
+char PlayAgain()
+{
+    char playAgain;
+    cout << "Do you want to play again (y/n): ";
+    cin >> playAgain;
+    return tolower(playAgain);
+}
+
+EquationLevel readLevel()
+{
+    short level;
+    do
+    {
+        cout << "Enter Equation Level [1]:Hard, [2]:Mid, [3]:Easy, [4]:Mix : ";
+        cin >> level;
+    } while (!(level >= 1 && level <= 4));
+    return (EquationLevel)level;
+}
+
+Operators readOperation()
+{
+    short type;
+    do
+    {
+        cout << "Enter Equation type [1]:Addition, [2]:Subtraction, [3]:Multiplication, [4]:Division, [5]:Mix : ";
+        cin >> type;
+    } while (!(type >= 1 && type <= 5));
+    return (Operators)type;
+}
+
+int readUserAnswer()
+{
+    int number;
+    cin >> number;
+    return number;
+}
+
+int generateOperand(EquationLevel level)
+{
+    if (level == EquationLevel::Hard)
+
+        return randomNumber(50, 100);
+    else if (level == EquationLevel::Mid)
+
+        return randomNumber(10, 50);
+    else if (level == EquationLevel::Easy)
+
+        return randomNumber(1, 10);
+    else
+        return randomNumber(1, 100);
+}
+
+int determineEquation(int operand1, int operand2, Operators op)
+{
+    switch (op)
+    {
+    case Operators::Addition:
+        return operand1 + operand2;
+    case Operators::Subtraction:
+        return operand1 - operand2;
+    case Operators::Multiplication:
+        return operand1 * operand2;
+    case Operators::Divsion:
+        return operand1 / operand2;
+    default:
+        return -1;
+    }
+}
+
+char operatorToSign(Operators op)
+{
+
+    switch (op)
+    {
+    case Operators::Addition:
+        return '+';
+    case Operators::Subtraction:
+        return '-';
+    case Operators::Multiplication:
+        return '*';
+    default:
+        return '/';
+    }
+}
+
+void printQuiz(const stEquation &equation)
+{
+    cout << equation.operand1 << endl;
+    cout << "\t" << operatorToSign(equation.op) << endl;
+    cout << equation.operand2 << endl;
+    cout << "__________________" << endl;
+}
+
+Result getRoundResult(float userAnswer, float equtionResult)
+{
+    return (userAnswer == equtionResult) ? Result::Pass : Result::Fail;
+}
+
+string levelToString(EquationLevel level)
+{
+    string levels[] = {"Hard", "Mid", "Easy", "Mix"};
+    return levels[int(level) - 1];
+}
+
+Result getGameWinner(int wins, int losses)
+{
+    return (wins > losses) ? Result::Pass : Result::Fail;
+}
+
+void printRoundResultMessage(Result result)
+{
+    (result == Result::Pass) ? cout << "Right Answer :)." << endl : cout << "Wrong Answer :( " << endl;
+}
+
+string operationName(Operators op)
+{
+    string operations[] = {"Addition", "Subtraction", "Multiplication", "Division", "Mix"};
+    return operations[int(op) - 1];
+}
+
+void setScreenColor(Result result)
+{
+    if (result == Result::Fail)
+    {
+        Beep(750, 100);
+        system("color 4F");
+    }
+    else
+        system("color 2F");
+}
+
+stEquation createQuestion(EquationLevel lvl, Operators operation)
+{
+    stEquation equation;
+    equation.op = (operation == Operators::Mix) ? Operators(randomNumber(1, 4)) : operation;
+    equation.level = lvl;
+    equation.operand1 = generateOperand(equation.level);
+    equation.operand2 = generateOperand(equation.level);
+    equation.result = determineEquation(equation.operand1, equation.operand2, equation.op);
+    return equation;
+}
+
+RoundInfo processRound(EquationLevel lvl, Operators operation)
+{
+
+    RoundInfo roundInfo;
+
+    roundInfo.equation = createQuestion(lvl, operation);
+
+    printQuiz(roundInfo.equation);
+
+    roundInfo.userAnswer = readUserAnswer();
+    roundInfo.enresult = getRoundResult(roundInfo.userAnswer, roundInfo.equation.result);
+
+    printRoundResultMessage(roundInfo.enresult);
+
+    cout << endl;
+
+    if (roundInfo.enresult == Result::Fail)
+        cout << "The right answer is : " << roundInfo.equation.result << endl;
+
+    cout << endl;
+    setScreenColor(roundInfo.enresult);
+
+    return roundInfo;
+}
+
+void updateGameScores(GameInfo &gameInfo, RoundInfo &roundInfo)
+{
+    (roundInfo.enresult == Result::Pass) ? gameInfo.wins += 1 : gameInfo.losses += 1;
+}
+
+GameInfo playGame(short rounds)
+{
+    RoundInfo roundInfo;
+    GameInfo gameInfo;
+
+    EquationLevel lvl = readLevel();
+    Operators operation = readOperation();
+
+    for (int i = 1; i <= rounds; i++)
+    {
+        roundInfo = processRound(lvl, operation);
+
+        updateGameScores(gameInfo, roundInfo);
+    }
+
+    gameInfo.Rounds = rounds;
+    gameInfo.enresult = getGameWinner(gameInfo.wins, gameInfo.losses);
+    gameInfo.gameLevel = levelToString(lvl);
+    gameInfo.OperationType = operationName(operation);
+    return gameInfo;
+}
+
+void resetColor()
+{
+    system("cls");
+    system("color 07");
+}
+
+void printHeader(Result result)
+{
+    cout << "________________________________" << endl
+         << endl;
+    (result == Result::Pass) ? cout << " You Passed :)." << endl : cout << " You Failed :(." << endl;
+    cout << "________________________________" << endl;
+}
+
+void printGameResult(const GameInfo &gameInfo)
+{
+    cout << endl;
+    cout << "Number Of questions: " << gameInfo.Rounds << endl;
+    cout << "Questions Level    : " << gameInfo.gameLevel << endl;
+    cout << "Operation Type     : " << gameInfo.OperationType << endl;
+    cout << "Number of right answers: " << gameInfo.wins << endl;
+    cout << "Number of Wrong answers: " << gameInfo.losses << endl;
+    cout << "________________________________" << endl;
+}
+
+void startGame()
+{
+    do
+    {
+        resetColor();
+
+        GameInfo gameInfo = playGame(readRounds());
+
+        printHeader(gameInfo.enresult);
+        printGameResult(gameInfo);
+
+        setScreenColor(gameInfo.enresult);
+
+    } while (tolower(PlayAgain()) == 'y');
+}
+
+int main()
+{
+    srand((unsigned)time(NULL));
+    startGame();
+    // resetColor();
+    return 0;
+}

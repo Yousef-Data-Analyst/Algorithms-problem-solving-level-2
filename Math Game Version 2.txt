@@ -1,0 +1,296 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+enum EquationLevel
+{
+    Hard = 1,
+    Mid = 2,
+    Easy = 3,
+    Mix = 4
+};
+
+enum Operation
+{
+    Addition = 1,
+    Subtraction = 2,
+    Multiplication = 3,
+    Division = 4,
+    opMix = 5
+};
+
+struct Question
+{
+    Operation op = Operation::Addition;
+    EquationLevel lvl = EquationLevel::Easy;
+    int operand1 = 0;
+    int operand2 = 0;
+    int result = 0;
+    int userAnswer = 0;
+    bool passed = false;
+};
+
+struct Quiz
+{
+    Question quesitons[100];
+    short questionsCount = 0;
+    EquationLevel lvl = EquationLevel::Easy;
+    Operation op = Operation::Addition;
+    short losses = 0;
+    short wins = 0;
+    bool won = false;
+};
+
+short readRounds()
+{
+    short rounds;
+    do
+    {
+        cout << "How Many Qestions Do You Want 1 -> 10? ";
+        cin >> rounds;
+    } while (!(rounds <= 10 && rounds >= 1));
+    return rounds;
+}
+
+char PlayAgain()
+{
+    char playAgain;
+    cout << "Do you want to play again (y/n): ";
+    cin >> playAgain;
+    return tolower(playAgain);
+}
+
+EquationLevel readLevel()
+{
+    short lvl;
+    do
+    {
+        cout << "Enter Questions Level [1]:Hard, [2]:Mid, [3]:Easy, [4]:Mix : ";
+        cin >> lvl;
+    } while (lvl < 1 || lvl > 4);
+    return EquationLevel(lvl);
+}
+
+Operation readOperation()
+{
+    short operationType;
+    do
+    {
+        cout << "Enter operation type [1]:Addition, [2]:Subtraction, [3]:Multiplication, [4]:Division, [5]:Mix : ";
+        cin >> operationType;
+    } while (!(operationType >= 1 && operationType <= 5));
+    return (Operation)operationType;
+}
+
+int randomNumber(short from, short to)
+{
+    return rand() % (to - from + 1) + from;
+}
+
+int calculateEquation(int operand1, int operand2, Operation op)
+{
+    switch (op)
+    {
+    case Operation::Addition:
+        return operand1 + operand2;
+    case Operation::Subtraction:
+        return operand1 - operand2;
+    case Operation::Multiplication:
+        return operand1 * operand2;
+    case Operation::Division:
+        if (operand2 != 0)
+            return operand1 / operand2;
+        else
+            cout << "Error Dvision by ";
+        return 0;
+    default:
+        return 0;
+    }
+}
+
+Question generateQuestion(EquationLevel lvl, Operation op)
+{
+    Question question;
+    if (op == Operation::opMix)
+    {
+        question.op = Operation(randomNumber(1, 4));
+    }
+    else
+        question.op = op;
+
+    switch (lvl)
+    {
+    case EquationLevel::Hard:
+        question.operand1 = randomNumber(50, 100);
+        question.operand2 = randomNumber(50, 100);
+        break;
+    case EquationLevel::Mid:
+        question.operand1 = randomNumber(10, 50);
+        question.operand2 = randomNumber(10, 50);
+        break;
+    case EquationLevel::Easy:
+        question.operand1 = randomNumber(1, 10);
+        question.operand2 = randomNumber(1, 10);
+        break;
+    default:
+        question.operand1 = randomNumber(1, 100);
+        question.operand2 = randomNumber(1, 100);
+        break;
+    }
+
+    question.result = calculateEquation(question.operand1, question.operand2, question.op);
+    question.lvl = lvl;
+    return question;
+}
+
+char operationToSign(Operation op)
+{
+    char signs[] = {'+', '-', '*', '/'};
+    return signs[op - 1];
+}
+
+void printQuestion(int operand1, int operand2, Operation op)
+{
+    cout << endl
+         << operand1 << endl;
+    cout << "\t" << operationToSign(op) << endl;
+    cout << operand2 << endl;
+    cout << "____________________" << endl;
+}
+
+int readUserAnswer()
+{
+    int answer;
+    cin >> answer;
+    return answer;
+}
+
+void setScreenColor(bool pass)
+{
+    if (!pass)
+    {
+        Beep(750, 100);
+        system("color 4F");
+    }
+    else
+        system("color 2F");
+}
+
+void askAndEvluteTheQuizQuestions(Quiz &quiz)
+{
+
+    for (int i = 0; i < quiz.questionsCount; i++)
+    {
+        cout << endl
+             << "Question[" << i + 1 << "/" << quiz.questionsCount << "]" << endl;
+
+        printQuestion(quiz.quesitons[i].operand1, quiz.quesitons[i].operand2, quiz.quesitons[i].op);
+
+        quiz.quesitons[i].userAnswer = readUserAnswer();
+
+        quiz.quesitons[i].passed = (quiz.quesitons[i].result == quiz.quesitons[i].userAnswer);
+
+        setScreenColor(quiz.quesitons[i].passed);
+
+        if (quiz.quesitons[i].passed)
+        {
+            cout << "Correct Answer :)" << endl;
+            quiz.wins++;
+        }
+        else
+        {
+            cout << "Wrong Answer :(" << endl
+                 << "The true Answer is: " << quiz.quesitons[i].result << endl;
+            quiz.losses++;
+        }
+    }
+}
+
+string levelToString(EquationLevel lvl)
+{
+    string lvls[] = {"Hard", "Mid", "Easy", "Mix"};
+    return lvls[lvl - 1];
+}
+
+string operationToString(Operation operation)
+{
+    string operations[] = {"Addition", "Subtraction", "Multiplication", "Division", "Mix"};
+    return operations[operation - 1];
+}
+
+void printQuizHeader(bool won)
+{
+    if (won)
+    {
+        cout << endl
+             << "________________________________" << endl
+             << endl;
+        cout << " You Passed :)." << endl;
+        cout << "________________________________" << endl;
+    }
+    else
+    {
+        cout << endl
+             << "________________________________" << endl
+             << endl;
+        cout << " You Failed :(." << endl;
+        cout << "________________________________" << endl;
+    }
+}
+
+void printQuizResult(Quiz quiz)
+{
+    cout << endl;
+    cout << "Number Of questions: " << quiz.questionsCount << endl;
+    cout << "Questions Level    : " << levelToString(quiz.lvl) << endl;
+    cout << "Operation Type     : " << operationToString(quiz.op) << endl;
+    cout << "Number of right answers: " << quiz.wins << endl;
+    cout << "Number of Wrong answers: " << quiz.losses << endl;
+    cout << "________________________________" << endl;
+}
+
+void resetColor()
+{
+    system("cls");
+    system("color 07");
+}
+
+void playMathGame(short rounds)
+{
+    Quiz quiz;
+
+    quiz.lvl = readLevel();
+    quiz.op = readOperation();
+    quiz.questionsCount = rounds;
+
+    for (int i = 0; i < rounds; i++)
+    {
+        quiz.quesitons[i] = generateQuestion(quiz.lvl, quiz.op);
+    }
+
+    askAndEvluteTheQuizQuestions(quiz);
+
+    quiz.won = (quiz.wins >= quiz.losses);
+
+    printQuizHeader(quiz.won);
+    printQuizResult(quiz);
+
+    setScreenColor(quiz.won);
+}
+
+void startGame()
+{
+    do
+    {
+        resetColor();
+        playMathGame(readRounds());
+    } while (PlayAgain() != 'n');
+}
+
+main()
+{
+    srand((unsigned)time(NULL));
+
+    startGame();
+}
